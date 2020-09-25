@@ -32,6 +32,16 @@ str(train)
 ```{r}
 ggplot(train, aes(x=clean_age, y=duration, color=sex)) +
   geom_point()
+ggplot(train, aes(x=clean_age, y=duration, color=city)) +
+  geom_point()
+ggplot(train, aes(x=clean_age, y=duration, color=country)) +
+  geom_point()
+ggplot(train, aes(x=clean_age, y=duration, color=province)) +
+  geom_point()
+ggplot(train, aes(x=clean_age, y=duration, color=V1)) +
+  geom_point()
+ggplot(train, aes(x=clean_age, y=duration, color=outcome)) +
+  geom_point()
 ```
 
 
