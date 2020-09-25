@@ -6,6 +6,10 @@ range_to_mean <- function(num_range){
   # Ex. "60-69" should turn into numeric 64.5
   
   # Factors should be converted into string first
+  if(class(num_range) == "factor"){
+    num_range <- as.character(num_range)
+  }
+  
   library(stringr)
   library(dplyr)
   
@@ -35,6 +39,9 @@ range_to_mean <- function(num_range){
     return(as.numeric(num_range))
   }
 }
+
+# Range
 range_to_mean("60-69")
 range_to_mean("6")
+range_to_mean(as.factor("6"))
 range_to_mean("")
