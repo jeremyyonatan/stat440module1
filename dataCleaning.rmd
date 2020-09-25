@@ -6,51 +6,13 @@ output: html_document
 ---
 
 ```{r}
+source('range_to_mean.R')
+library(ggplot2)
+```
+
+```{r}
 train <- read.csv("train2.txt")
 ```
-
-
-```{r}
-
-```
-
-
-
-```{r}
-range_to_mean <- function(num_range){
-  # This function takes a character type number range and converts it into
-  # the numeric type mean of the maximums of the ranges
-  # If the input character is not a range, then just return it as numeric
-  
-  # Ex. "60-69" should turn into numeric 64.5
-  
-  # Factors should be converted into string first
-  library(stringr)
-  library(dplyr)
-  
-  # Check that num_range is failing the as.numeric test
-  if( suppressWarnings(is.na(as.numeric(num_range)) == F) ){
-      # Store the leftmost and rightmost values
-    left_num <- str_replace(
-      num_range, "[:space:]*-[:space:]*[:digit:]+$", "") %>%
-      as.numeric()
-  
-    right_num <- str_replace(
-      num_range, "^[:digit:]+[:space:]*-[:space:]*", "") %>%
-      as.numeric()
-  
-    # Return the mean of the two numbers
-    return(mean(c(left_num, right_num)))
-  }
-  
-  else{
-    return(as.numeric(num_range))
-  }
-}
-
-
-```
-
 
 
 ```{r}
@@ -60,15 +22,18 @@ str(train)
 
 ```{r}
 #clean age rages
-train$age <- lapply(train$age, range_to_mean)
+train$clean_age <- sapply(train$age, range_to_mean)
+summary(train)
+str(train)
 ```
+
+
 
 ```{r}
-library(ggplot2)
+ggplot(train, aes(x=clean_age, y=duration, color=sex)) +
+  geom_point()
 ```
 
-```{r}
 
-```
 
 
