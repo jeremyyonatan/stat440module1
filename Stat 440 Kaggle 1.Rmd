@@ -1,0 +1,254 @@
+---
+title: "Stat 440 Kaggle 1"
+author: "Jackie Lu"
+date: "9/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Data cleaning
+```{r}
+# Import the train.txt and test.txt files
+train1 <- read.delim2(file = "train.txt", sep = ",")
+test1 <- read.delim2(file = "test.txt", sep = ",")
+
+# There is one missing value in confirmed and several in age
+# this can be seen by doing `View(train1)` and then ordering the column
+# and looking at the extreme values
+
+# All columns are factors except duration, which is an int. We should
+# convert them into their proper variables
+
+# Load dplyr for data cleaning
+library(dplyr)
+library(purrr)
+```
+
+Function that replaces string range with mean of the range
+```{r}
+range_to_mean <- function(num_range){
+  # This function takes a character type number range and converts it into
+  # the numeric type mean of leftmost and rightmost numbers of the range.
+  # If the input character is not a range, then just return it as numeric
+  
+  # Ex. "60-69" should turn into numeric 64.5
+  
+  # Factors should be converted into string first
+  if(class(num_range) == "factor"){
+    num_range <- as.character(num_range)
+  }
+  
+  library(stringr)
+  library(dplyr)
+  
+  # If there is a hyphen
+  if( str_detect(num_range, "-") == T ){
+    # Store the leftmost and rightmost values of the range
+    left_num <- str_replace(
+      num_range, "[:space:]*-[:space:]*[:digit:]+$", "") %>%
+      as.numeric()
+  
+    right_num <- str_replace(
+      num_range, "^[:digit:]+[:space:]*-[:space:]*", "") %>%
+      as.numeric()
+  
+    # Return the mean of the two numbers
+    return(mean(c(left_num, right_num)))
+  }
+  
+  # If there is no hyphen and it can't be converted into numeric
+  # use NA instead
+  else if( is.na(as.numeric(num_range)) == T ){
+    return(NA)
+  }
+  
+  # Otherwise, convert the number into numeric type
+  else{
+    return(as.numeric(num_range))
+  }
+}
+```
+
+
+```{r}
+# Make a function that goes through a vector and replaces range values
+# such as "0-10" with the mean age and then indicate 0 for no replacement
+# and 1 for replacement
+```
+
+Data cleaning ages
+```{r}
+# Converting age ranges to a single number
+train1$age2 <- map_dbl(as.character(train1$age), range_to_mean)
+
+# Indicator variable for whether or not range_to_mean did anything on the
+# row
+train1$age_ind <- is.na(as.numeric(as.character(train1$age)))
+
+# Make sure the indicator isn't TRUE for the rows that were already NA
+train1$age_ind[which(is.na(train1$age2))] <- FALSE
+```
+
+Symptoms cleaning function
+```{r}
+words_split <- function(vector_of_words, sep = ", "){
+  # Function that takes a character vector in which some elements have more
+  # than one word, and a character variable of the separator and outputs a
+  # character vector of words in which each element corresponds to a single
+  # word elements. Multiple words in an element are assumed to be separated
+  # by sep, the specified separator.
+  library(stringr)
+  
+  # Concatenate all elements into one large string with two spaces between
+  # different elements
+  vector_of_words <- str_c(as.character(vector_of_words),
+                           sep = "  ", collapse = "  ")
+  
+  # Replace all of the multiple spaces with "; ", don't replace the single
+  # spaces
+  vector_of_words <- str_replace_all(vector_of_words, "\\s\\s+", sep)
+  
+  # Return the vectorized form of the long character variable
+  return( unlist(str_split(vector_of_words, pattern = sep)) )
+}
+```
+
+
+Data cleaning symptoms
+```{r}
+library(stringr)
+
+# Create a vector of words from symptoms
+skrt0 <- words_split(train1$symptoms, sep = "; ")
+
+# Check the frequencies of the symptoms
+sort(table(skrt0), decreasing = T)
+
+# We can see that over half of the symptoms have a frequency of 1
+# Consideration: perhaps we should just group these to reduce the number of
+# indicator variables
+
+# Pare the vector down to unique words
+skrt1 <- unique(skrt0)
+length(skrt1)
+# Here we see that we need 60 indicator variables just for symptoms
+```
+
+Add the indicator variables for symptoms
+```{r}
+# Replace the "℃" with "C"
+skrt2 <- str_replace_all(skrt1, "℃", "C")
+# Replace " ° " with " "
+skrt2 <- str_replace_all(skrt2, " ° ", " ")
+
+# Initialize a dataframe
+symp_df <- data.frame(matrix(nrow = nrow(train1), ncol = length(skrt1)))
+# Create column names from the unique symptoms
+colnames(symp_df) <- skrt2
+
+# Create the vectors for the columns
+for( i in c( 1:length(skrt2) ) ){
+  # Each column indicates if the word is present in the symptoms column
+  symp_df[ , i] <- str_detect(train1$symptoms, skrt2[i])
+}
+
+# Combine the original train1 data frame with the new symptoms data frame
+train2 <- cbind(train1, symp_df)
+
+# Remove the old age column
+train2$age <- NULL
+# Remove the date column for now
+train2$confirmed <- NULL
+# Remove the symptoms column
+train2$symptoms <- NULL
+
+# Export as csv
+write.csv(train2, "finally.csv")
+
+# Consideration: perhaps have a column for fever, and a column for
+# temperature with NA if it's not there?
+```
+
+Clean the test file
+```{r}
+# Remove the id column from test data set
+test1$Id <- NULL
+
+# Create an outcome column
+# We do this first to make the column a factor with 3 levels
+test1$outcome <- factor(rep("", times = 200),
+                        levels = c("", "Death", "Recovery"))
+
+# Change column order so that it matches the training set
+test1 <- test1[ , c(1:8, 10, 9)]
+
+# Converting age ranges to a single number
+test1$age2 <- map_dbl(as.character(test1$age), range_to_mean)
+# Indicator variable for whether or not range_to_mean did anything on the
+# row
+test1$age_ind <- is.na(as.numeric(as.character(test1$age)))
+# Make sure the indicator isn't TRUE for the rows that were already NA
+test1$age_ind[which(is.na(test1$age2))] <- FALSE
+
+# Initialize a dataframe, use the unique words from the training set
+symp_df <- data.frame(matrix(nrow = nrow(test1), ncol = length(skrt1)))
+
+# Create column names from the unique symptoms
+colnames(symp_df) <- skrt2
+
+# Create the vectors for the columns
+for( i in c( 1:length(skrt2) ) ){
+  symp_df[ , i] <- str_detect(test1$symptoms, skrt2[i])
+}
+# Consideration: don't know how to turn this for loop into a map function
+# instead; perhaps with map2_lgl
+
+# Combine the original train1 data frame with the new symptoms data frame
+test2 <- cbind(test1, symp_df)
+
+# Remove the old age column
+test2$age <- NULL
+# Remove the date column for now
+test2$confirmed <- NULL
+# Remove the symptoms column
+test2$symptoms <- NULL
+
+# Bandage fix because age2_na key error
+test2$age2[1] <- NA
+
+# Export as csv
+write.csv(test2, "finally_again.csv")
+```
+
+Code for combined train and test data set
+```{r}
+all1 <- rbind(train2, test2)
+
+write.csv(all1, "train_and_test.csv")
+```
+
+Handling csv
+```{r}
+preds <- read.csv("testing.csv")
+
+preds2 <- str_replace_all(preds$duration, "\\[", "")
+preds2 <- str_replace_all(preds2, "\\]", "")
+
+preds$duration <- preds2
+
+write.csv(preds, "predictions.csv", row.names = F, quote = F)
+```
+
+
+
+
+
+
+
+
+
+
+
