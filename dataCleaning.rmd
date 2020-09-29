@@ -131,19 +131,70 @@ clean_age_and_symptoms <- function(df1){
 }
 ```
 
+Clean the test data set
+```{r}
+test2 <- read.csv("data/test2.txt")
+
+test2 <- clean_age_and_symptoms(test2)
+
+test2$age <- NULL
+test2$symptoms <- NULL
+test2$confirmed <- NULL
+
+# Export the new test dataset
+write.csv(test2, "test2_cleaned.csv")
+
+# Consideration: the new test data set might have indicator symptom
+# variables that aren't present in even the other three data sets.
+```
+
+
 Clean the other data sets
 ```{r}
-# Old test set that had durations
-test1 <- read.csv("data/test.txt")
-# New test set for the new training set
-test2 <- read.csv("data/test2.txt")
 # Old training set
 train1 <- read.csv("data/train.txt")
+# Remove the "outcome" column for merging purposes
+train1$outcome <- NULL
 
-test1 <- clean_age_and_symptoms(test1)
-test2 <- clean_age_and_symptoms(test2)
-train1 <- clean_age_and_symptoms(train1)
+# Old test set that had durations
+test1 <- read.csv("data/test.txt")
+# Remove the Id column for mergin purposes
+test1$Id <- NULL
+
+# Copying the new training set
+train_new <- read.csv("data/train2.txt")
+# Remove the "outcome" column for merging purposes
+train_new$outcome <- NULL
+
+# Merge the data sets
+merged_df1 <- rbind(train1, test1, train_new)
+
+# Remove the date columns too; we should use them once they've been cleaned
+# into a date variable so that we can use it as a numerical category for
+# the fast.ai model
+# Note that the fast.ai tabular model only accepts categorical or numerical
+# variables.
+merged_df1$confirmed <- NULL
+
+# Clean the df
+merged_df1 <- clean_age_and_symptoms(merged_df1)
+
+# Consideration: Not sure what to do with the outcome column in the
+# old test set; not sure if they are actually all blank or missing
+
+train_new <- clean_age_and_symptoms(train_new)
+train_new$confirmed <- NULL
 ```
+
+Exporting to Python
+```{r}
+# Export the merged data sets that all have duration
+write.csv(merged_df1, "data/merged_df1.csv")
+
+# Export just the new training set
+write.csv(train_new, "data/train_new_cleaned.csv")
+```
+
 
 
 
