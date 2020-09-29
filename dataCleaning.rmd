@@ -10,21 +10,23 @@ source('range_to_mean.R')
 source('words_split.R')
 library(ggplot2)
 library(stringr)
+library(purrr)
 ```
 
 ```{r}
-train <- read.csv("train2.txt")
+# Load in the new training data
+train <- read.csv("data/train2.txt")
 ```
 
 
-```{r}
+```{r, eval = F}
 summary(train)
 str(train)
 ```
 
 ```{r}
-#clean age ranges
-train$clean_age <- sapply(train$age, range_to_mean)
+# Clean age ranges by converting age ranges to a single number
+train$clean_age <- map_dbl(train$age, range_to_mean)
 summary(train)
 str(train)
 ```
