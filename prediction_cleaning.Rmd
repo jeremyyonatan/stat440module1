@@ -1,0 +1,27 @@
+---
+title: "prediction_cleaning"
+author: "Jackie Lu"
+date: "9/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Read the predictions into a single element
+preds <- readLines("testing.csv")
+# Turn it into a vector, separating based on the commas
+preds <- unlist(str_split(preds, pattern = ","))
+# Create a dataframe with Id and duration
+preds_df <- data.frame(Id = c(1:200), duration = preds)
+
+# Remove the square brackets
+preds_df$duration <- str_replace_all(preds_df$duration, "\\[", "")
+preds_df$duration <- str_replace_all(preds_df$duration, "\\]", "")
+
+# Output into a csv
+write.csv(preds_df, "predictions.csv", row.names = F, quote = F)
+```
+
