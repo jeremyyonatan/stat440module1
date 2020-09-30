@@ -1,0 +1,62 @@
+---
+title: "Untitled"
+author: "Nathania Santoso"
+date: "9/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("/Users/nathaniasantoso/Desktop")
+#load cleaned train and test data
+train <- read.csv("train_new_cleaned.csv", sep=",")
+test <- read.csv("test2_cleaned.csv", sep=",")
+#change the value from T/F to 0 and 1
+train[,11:50] <- (train[,11:59])*1
+#drop  missing values
+train <- train[complete.cases(train), ]
+```
+
+```{r}
+#create a random forest model
+library(randomForest)
+model1 <- randomForest(duration ~ .-age-city-symptoms, data = train, importance = TRUE)
+model1
+#create another model with by adding more split
+model2 <- randomForest(duration ~ .-age-city-symptoms, data = train,ntree = 500, mtry = 6, importance = TRUE)
+model2
+```
+
+```{r}
+#see the importance of each variable
+varImpPlot(model2) 
+#based on the graph of the importance of each variables,I decided to omit some variables
+#and only take province, pneumonia, cough, country, V1, weakness, sore.throat, fever, muscular, soreness, vomitting as the predictors (since those are more importance based on the graph)
+```
+```{r}
+#build another model with just important variables
+model3 <- randomForest(duration ~ province+pneumonia+cough+country+V1+weakness+sore.throat+fever+clean_age+muscular.soreness+vomiting, data = train, ntree = 500, mtry = 6, importance = TRUE)
+model3
+#the mean squared of residuals decreased when using just the important variable
+```
+```{r}
+# Predicting on train set
+train.predict <- predict(model3, train, type = "class")
+mean(train.predict)
+mean(train$duration)
+```
+
+```{r}
+#create baseline file
+baseline <- cbind(train[,1],train.predict)
+mean_duration <- mean(baseline[,2])
+baseline <- cbind(train[1:200,1],mean_duration)
+#rename columns
+colnames(baseline)[1:2] <-c("Id","duration")
+#export to csv file
+write.table(baseline, file = "baseline.csv", sep = "\t",
+            row.names = FALSE)
+```
