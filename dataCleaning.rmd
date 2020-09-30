@@ -52,7 +52,7 @@ ggplot(train, aes(x=clean_age, y=duration, color=outcome)) +
 Clean symptoms
 ```{r}
 # Create a vector of symptoms, with each element corresponding to a symptom
-words1 <- words_split(train1$symptoms, sep = "; ")
+words1 <- words_split(train$symptoms, sep = "; ")
 
 # Looking at the frequencies of the symptoms
 sort(table(words1), decreasing = T)
