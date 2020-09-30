@@ -52,7 +52,7 @@ ggplot(train, aes(x=clean_age, y=duration, color=outcome)) +
 Clean symptoms
 ```{r}
 # Create a vector of symptoms, with each element corresponding to a symptom
-words1 <- words_split(train$symptoms, sep = "; ")
+words1 <- words_split(train1$symptoms, sep = "; ")
 
 # Looking at the frequencies of the symptoms
 sort(table(words1), decreasing = T)
@@ -133,19 +133,18 @@ clean_age_and_symptoms <- function(df1){
 
 Clean the test data set
 ```{r}
-test2 <- read.csv("data/test2.txt")
-
-test2 <- clean_age_and_symptoms(test2)
-
-test2$age <- NULL
-test2$symptoms <- NULL
-test2$confirmed <- NULL
-
-# Export the new test dataset
-write.csv(test2, "data/test2_cleaned.csv")
-
-# Consideration: the new test data set might have indicator symptom
-# variables that aren't present in even the other three data sets.
+# test2 <- read.csv("data/test2.txt")
+# 
+# test2 <- clean_age_and_symptoms(test2)
+# 
+# test2$symptoms <- NULL
+# test2$confirmed <- NULL
+# 
+# # Export the new test dataset
+# write.csv(test2, "data/test2_cleaned.csv")
+# 
+# # Consideration: the new test data set might have indicator symptom
+# # variables that aren't present in even the other three data sets.
 ```
 
 
@@ -179,9 +178,6 @@ merged_df1$confirmed <- NULL
 # Clean the df
 merged_df1 <- clean_age_and_symptoms(merged_df1)
 
-# Remove the old symptoms column
-merged_df1$symptoms <- NULL
-
 # Consideration: Not sure what to do with the outcome column in the
 # old test set; not sure if they are actually all blank or missing
 
@@ -190,20 +186,89 @@ train_new <- clean_age_and_symptoms(train_new)
 train_new$confirmed <- NULL
 ```
 
+Fixing column issues
+```{r}
+# Merge the training and test data sets so that they all have the same
+# columns
+
+test2 <- read.csv("data/test2.txt")
+
+test2$clean_age <- map_dbl(test2$age, range_to_mean)
+
+# Create a vector of symptoms, with each element corresponding
+# to a symptom
+words1 <- words_split(merged_df1$symptoms, sep = "; ")
+  
+# Get the unique symptoms
+words2 <- words1 %>%
+  unique() %>%
+  # Replace the "℃" with "C"
+  str_replace_all("℃", "C") %>%
+  # Replace " ° " with " "
+  str_replace_all(" ° ", " ")
+  
+# Initialize a dataframe
+symptoms_df <- data.frame(
+  matrix(nrow = nrow(test2),
+         ncol = length(words2))
+  )
+
+colnames(symptoms_df) <- words2
+  
+# Create the vectors for the columns
+for( i in c( 1:length(words2) ) ){
+  # Each column indicates if the word is present in the symptoms column
+  symptoms_df[ , i] <- str_detect(test2$symptoms, words2[i])
+}
+# Combine the original train data frame with the new symptoms data frame
+test2 <- cbind(test2, symptoms_df)
+  
+# Remove the intermediate variables
+rm(symptoms_df, words1, words2)
+
+# Add an empty duration column for test2
+test2$duration <- as.numeric(NA)
+
+# Remove the confirmed column
+test2$confirmed <- NULL
+
+# Remove the id column
+test2$Id <- NULL
+
+# Check the first few column names
+head(colnames(merged_df1), 10)
+head(colnames(test2), 10)
+
+# Reorganize the columns
+test2 <- cbind(test2[ , 1:7], duration = test2[, 87], test2[8:86])
+
+# Check the first few column names
+head(colnames(merged_df1), 10)
+head(colnames(test2), 10)
+
+# Fix column name issue
+colnames(test2)[65] <- "fever (38-39 C)"
+
+# Merge the datasets
+full_df1 <- rbind(merged_df1, test2)
+
+# Remove the old symptoms column
+full_df1$symptoms <- NULL
+```
+
+
 Exporting to Python
 ```{r}
+# Split the fully merged data set
+merged_df1 <- full_df1[0:638, ]
+test2 <- full_df1[639:838, ]
+
 # Export the merged data sets that all have duration
 write.csv(merged_df1, "data/merged_df1.csv")
+
+# Export the new test set
+write.csv(test2, "data/test2_cleaned.csv")
 
 # Export just the new training set
 write.csv(train_new, "data/train_new_cleaned.csv")
 ```
-
-
-
-
-
-
-
-
-
