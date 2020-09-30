@@ -179,9 +179,13 @@ merged_df1$confirmed <- NULL
 # Clean the df
 merged_df1 <- clean_age_and_symptoms(merged_df1)
 
+# Remove the old symptoms column
+merged_df1$symptoms <- NULL
+
 # Consideration: Not sure what to do with the outcome column in the
 # old test set; not sure if they are actually all blank or missing
 
+# Create a separate cleaned training set if we can't use old data
 train_new <- clean_age_and_symptoms(train_new)
 train_new$confirmed <- NULL
 ```
