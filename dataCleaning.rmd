@@ -33,7 +33,7 @@ str(train)
 ```
 
 
-Plots of duration vs. clean_age with colors for the other variables
+Plots of duration vs. clean_age with colors for the other variables to look for linear associations 
 ```{r, eval = F}
 ggplot(train, aes(x=clean_age, y=duration, color=sex)) +
   geom_point()
@@ -64,6 +64,8 @@ words2 <- words1 %>%
   str_replace_all("℃", "C") %>%
   # Replace " ° " with " "
   str_replace_all(" ° ", " ")
+
+
 
 # Initialize a dataframe
 symptoms_df <- data.frame(matrix(nrow = nrow(train),
