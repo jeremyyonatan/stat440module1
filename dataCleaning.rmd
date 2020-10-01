@@ -107,11 +107,10 @@ level3_symptoms <- function(words_vector){
 }
 ```
 
-<<<<<<< HEAD
 ```{r}
 detect_level1 <- function(df, word_vector) {
   
-  for( i in c(0:length(words_vector) ) ){
+  for( i in c(0:length(word_vector) ) ){
       if(word_vector[i] == "muscle soreness"){
         df$word_vector[i] <- str_detect(df$symptoms, regex(".*musc.*|.*discomfort.*|malaise|myalgia", ignore_case = TRUE))
       }else if (word_vector[i] =="sore throat"){
@@ -286,9 +285,6 @@ train_full_level3 <- cbind(train, symptoms_df_level3)
 
 
 
-
-=======
->>>>>>> 25d0c3bc162acb0887b6179611f193b708151ae3
 Dataframe cleaning function
 ```{r}
 clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
@@ -312,17 +308,25 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   # Clean age ranges by converting age ranges to a single number
   df1$clean_age <- map_dbl(df1$age, range_to_mean)
   
+  # Make the symptoms all lower case; note this affects the fever temps
+  df1$symptoms <- tolower(df1$symptoms)
+  df2$symptoms <- tolower(df2$symptoms)
+  
+  # Replace the varying centrigrade symbols/letters
+  df1$symptoms <- str_replace_all(df1$symptoms, "[:space:]*℃", " C") %>%
+    str_replace_all(" ° c", " C")
+  
+  # Replace the varying centrigrade symbols/letters
+  df2$symptoms <- str_replace_all(df2$symptoms, "[:space:]*℃", " C") %>%
+    str_replace_all(" ° c", " C")
+  
   # Create a vector of symptoms, with each element corresponding
   # to a symptom
   words1 <- words_split(df1$symptoms, sep = "; ")
   
   # Get the unique symptoms
   words2 <- words1 %>%
-    unique() %>%
-    # Replace the "℃" with "C"
-    str_replace_all("℃", "C") %>%
-    # Replace " ° " with " "
-    str_replace_all(" ° ", " ")
+    unique()
   
   if(symptom_level == 1){
     words2 <- level1_symptoms(words2)
@@ -351,7 +355,7 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   df2 <- cbind(df2, symptoms_df)
   
   # Remove the old symptoms column
-  df2$symptoms <- NULL
+  ##df2$symptoms <- NULL
   
   # Remove the intermediate variables
   rm(symptoms_df, words1, words2, i)
@@ -391,8 +395,18 @@ test2_level1 <- clean_confirmed_age_and_symptoms(train_new, test2,
 
 full_df1_level1 <- rbind(train_new_level1, test2_level1)
 rm(train_new_level1, test2_level1)
+
+# Working on fixing the fever indicator variables; it's not detecting them
+
 ```
 
+Test the cleaning function
+```{r}
+# None of the indicator variables should be 0
+for (i in c(9:56)){
+  cat(sum(train_new_level0[ , i]), ", ")
+}
+```
 
 
 Exporting to Python
