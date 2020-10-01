@@ -163,7 +163,7 @@ detect_level2 <- function(df, word_vector) {
 ```
 
 ```{r}
-detect_level2 <- function(df, word_vector) {
+detect_level3 <- function(df, word_vector) {
   
   for( i in c(0:length(words_vector) ) ){
       if(word_vector[i] == "muscle soreness"){
