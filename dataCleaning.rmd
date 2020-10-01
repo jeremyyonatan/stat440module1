@@ -72,22 +72,10 @@ symptoms_df <- data.frame(matrix(nrow = nrow(train),
 # Create column names from the unique symptoms
 colnames(symptoms_df) <- words2
 
-words2
 
-for( i in c(0:length(words2) ) ){
-      new[i] <- str_detect(words2[i], "musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia")
-}
-str_replace(words2, "musc.|.musc|discomfort.|.discomfort|malaise|myalgia", "muscular soreness")
-new
-words2
-for( i in c(0:length(words2) ) ){
-      new[i] <- str_detect(words2[i], "throat.*|.*throat")
-}
-new
-for( i in c(0:length(words2) ) ){
-      new[i] <- str_detect(words2[i], ".breath|breath.|.*dyspnea|dyspnea.*")
-}
-new
+
+
+                      
 # Create the vectors for the columns
 for( i in c( 1:length(words2) ) ){
   # Each column indicates if the word is present in the symptoms column
@@ -103,38 +91,39 @@ level1_symptoms <- (words_vector){
   for( i in c(1:langth(words_vector) ) ){
       str_replace(words_vector[i], ".musc.|.discomfort.|malaise|myalgia", "muscular soreness")
   }
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia")
+}
 
-   headache
-runny nose/rhinorreah
-nasal congestion
-sputum/expectoration (wet cough)
-weak/weakness/systemic weakness
-nausea
-pneumonitis (lung inflamation)
-respiratory symptoms
-vomiting
-acute pharyngitis (inflamed tonsils)
-chest distress
-chest pain
-diarrhea/diarrheoa/dirrhoea
-conjunctivitis
-dry cough
-dry mouth
-fever 37/37.2
-fever 37.7
-fever 38-39
-fever 39.5
-fever
-malaise
-phasyngeal dryness
-pneumonia
-poor physical condition
-severe pneumonia
-sneeze
-cough
-chills
-fatigue
 
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "throat.*|.*throat")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".breath|breath.|.*dyspnea|dyspnea.*")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*weak|weaK.*")
+}
+
+  
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "diarr.")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "runny nose|rhinorreah")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "sputum|expectoration")
+}
 }
 ```
 
@@ -142,12 +131,108 @@ fatigue
 ```{r}
 level2_symptoms <- (words_vector){
   
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "throat.*|.*throat")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".breath|breath.|.*dyspnea|dyspnea.*")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*weak|weaK.*")
+}
+
+  
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "diarr.")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "runny nose|rhinorreah")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "sputum|expectoration")
+}
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".37|37.")
+}
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".39|39.")
+}
+
 }
 ```
 
 ```{r}
 level3_symptoms <- (words_vector){
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "throat.*|.*throat")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".breath|breath.|.*dyspnea|dyspnea.*")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*weak|weaK.*")
+}
+
   
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "diarr.")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "runny nose|rhinorreah")
+}
+
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], "sputum|expectoration")
+}
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*37|37.*")
+}
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*39|39.*|fever")
+}
+  
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*chest|chest.*")
+}
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*pneu|pneu.*|respir.*")
+}
+
+  for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*cough|cough.*|sneeze")
+}
+
+for( i in c(0:length(words2) ) ){
+      new[i] <- str_detect(words2[i], ".*dry|dry.*")
+}
+
+
 }
 ```
 
