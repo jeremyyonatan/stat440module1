@@ -67,7 +67,6 @@ level1_symptoms <- function(words_vector){
 }
 ```
 
-
 ```{r}
 level2_symptoms <- function(words_vector){
   words_vector <- str_replace_all(words_vector, regex(".*musc.*|.*discomfort.*|malaise|myalgia|.*physical.*", ignore_case = TRUE), "muscle soreness")
@@ -108,6 +107,7 @@ level3_symptoms <- function(words_vector){
 }
 ```
 
+<<<<<<< HEAD
 ```{r}
 detect_level1 <- function(df, word_vector) {
   
@@ -287,6 +287,8 @@ train_full_level3 <- cbind(train, symptoms_df_level3)
 
 
 
+=======
+>>>>>>> 25d0c3bc162acb0887b6179611f193b708151ae3
 Dataframe cleaning function
 ```{r}
 clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
@@ -348,6 +350,9 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   # Combine the original train data frame with the new symptoms data frame
   df2 <- cbind(df2, symptoms_df)
   
+  # Remove the old symptoms column
+  df2$symptoms <- NULL
+  
   # Remove the intermediate variables
   rm(symptoms_df, words1, words2, i)
   
@@ -356,104 +361,38 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
 }
 ```
 
-Clean the test data set
-```{r}
-# test2 <- read.csv("data/test2.txt")
-# 
-# test2 <- clean_confirmed_age_and_symptoms(test2)
-# 
-# test2$symptoms <- NULL
-# test2$confirmed <- NULL
-# 
-# # Export the new test dataset
-# write.csv(test2, "data/test2_cleaned.csv")
-# 
-# # Consideration: the new test data set might have indicator symptom
-# # variables that aren't present in even the other three data sets.
-```
-
-
-Clean the other data sets
+Testing the new function
 ```{r}
 # Copying the new training set
 train_new <- read.csv("data/train2.txt")
 # Remove the "outcome" column for merging purposes
 train_new$outcome <- NULL
 
-# Clean the df
-train_new <- clean_confirmed_age_and_symptoms(train_new)
-
-# Consideration: Not sure what to do with the outcome column in the
-# old test set; not sure if they are actually all blank or missing
-
-# Create a separate cleaned training set if we can't use old data
-```
-
-Fixing column issues
-```{r}
-# Merge the training and test data sets so that they all have the same
-# columns
-
 test2 <- read.csv("data/test2.txt")
-
 # Remove the id column
 test2$Id <- NULL
-
 # Add an empty duration column for test2
 test2$duration <- as.numeric(NA)
 
-# test2$clean_age <- map_dbl(test2$age, range_to_mean)
-# 
-# test2$confirmed <- dmy(test2$confirmed)
+train_new_level0 <- clean_confirmed_age_and_symptoms(train_new, train_new,
+                                                     symptom_level = 0)
 
-# Check the first few column names
-head(colnames(train_new), 10)
-head(colnames(test2), 10)
+test2_level0 <- clean_confirmed_age_and_symptoms(train_new, test2,
+                                                 symptom_level = 0)
 
-# Check the first few column names
-head(colnames(train_new), 10)
-head(colnames(test2), 10)
+full_df1_level0 <- rbind(train_new_level0, test2_level0)
+rm(train_new_level0, test2_level0)
 
-# Create a vector of symptoms, with each element corresponding
-# to a symptom
-words1 <- words_split(train_new$symptoms, sep = "; ")
-  
-# Get the unique symptoms
-words2 <- words1 %>%
-  unique() %>%
-  # Replace the "℃" with "C"
-  str_replace_all("℃", "C") %>%
-  # Replace " ° " with " "
-  str_replace_all(" ° ", " ")
-  
-# Initialize a dataframe
-symptoms_df <- data.frame(
-  matrix(nrow = nrow(test2),
-         ncol = length(words2))
-  )
+# Trying level 1
+train_new_level1 <- clean_confirmed_age_and_symptoms(train_new, train_new,
+                                                     symptom_level = 1)
+test2_level1 <- clean_confirmed_age_and_symptoms(train_new, test2,
+                                                 symptom_level = 1)
 
-colnames(symptoms_df) <- words2
-  
-# Create the vectors for the columns
-for( i in c( 1:length(words2) ) ){
-  # Each column indicates if the word is present in the symptoms column
-  symptoms_df[ , i] <- str_detect(test2$symptoms, words2[i])
-}
-# Combine the original train data frame with the new symptoms data frame
-test2 <- cbind(test2, symptoms_df)
-  
-# Remove the intermediate variables
-rm(symptoms_df, words1, words2, i)
-
-# Fix column name issue
-##colnames(test2)[65] <- "fever (38-39 C)"
-
-# Merge the training and test datasets
-full_df1 <- rbind(train_new, test2)
-
-# Remove the old symptoms column
-full_df1$symptoms <- NULL
+full_df1_level1 <- rbind(train_new_level1, test2_level1)
+rm(train_new_level1, test2_level1)
 ```
+
 
 
 Exporting to Python
