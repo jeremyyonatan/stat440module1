@@ -246,11 +246,7 @@ full_df1$symptoms <- NULL
 
 Testing lubridate on confirmed column
 ```{r}
-# Load the old training set
-train1 <- read.csv("data/train.txt")
-# Clean age and symptoms
-train1 <- clean_age_and_symptoms(train1)
-# 
+
 ```
 
 
