@@ -66,17 +66,21 @@ words2 <- words1 %>%
   # Replace " ° " with " "
   str_replace_all(" ° ", " ")
 
-level1_symptoms(words2)
+words3 <- level1_symptoms(words2)
+words4 <- level2_symptoms(words2)
+words5 <- level3_symptoms(words2)
+print("level1")
+words3
+print("level2")
+words4
+print("level3")
+words5
 
 # Initialize a dataframe
 symptoms_df <- data.frame(matrix(nrow = nrow(train),
                                  ncol = length(words2)))
 # Create column names from the unique symptoms
 colnames(symptoms_df) <- words2
-
-
-
-
                       
 # Create the vectors for the columns
 for( i in c( 1:length(words2) ) ){
@@ -90,11 +94,11 @@ train_full <- cbind(train, symptoms_df)
 
 ```{r}
 level1_symptoms <- function(words_vector){
-  words_vector <- str_replace_all(words_vector, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia", ignore_case = TRUE), "muscle soreness")
-  words_vector <- str_replace_all(words_vector, regex("throat.*|.*throat", ignore_case = TRUE), "sore throat")
-  words_vector <- str_replace_all(words_vector, regex(".*breath|breath.*|.*dyspnea|dyspnea.*", ignore_case = TRUE), "difficulties breathing")
+  words_vector <- str_replace_all(words_vector, regex(".*musc.*|.*discomfort.*|malaise|myalgia", ignore_case = TRUE), "muscle soreness")
+  words_vector <- str_replace_all(words_vector, regex(".*throat.*", ignore_case = TRUE), "sore throat")
+  words_vector <- str_replace_all(words_vector, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE), "difficulties breathing")
   words_vector <- str_replace_all(words_vector, regex("diarr.*", ignore_case = TRUE), "diarrhea")
-  words_vector <- str_replace_all(words_vector, regex(".*weak|weaK.*", ignore_case = TRUE), "weakness")
+  words_vector <- str_replace_all(words_vector, regex(".*weaK.*", ignore_case = TRUE), "weakness")
   words_vector <- str_replace_all(words_vector, regex("runny nose|rhinorreah", ignore_case = TRUE), "runny nose")
   words_vector <- str_replace_all(words_vector, regex("sputum|expectoration", ignore_case = TRUE), "wet cough")
   words_vector <- unique(words_vector)
@@ -105,35 +109,35 @@ level1_symptoms <- function(words_vector){
 
 ```{r}
 level2_symptoms <- function(words_vector){
-  words_vector <- str_replace_all(words_vector, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE), "muscle soreness")
-  words_vector <- str_replace_all(words_vector, regex("throat.*|.*throat", ignore_case = TRUE), "sore throat")
-  words_vector <- str_replace_all(words_vector, regex(".*breath|breath.*|.*dyspnea|dyspnea.*", ignore_case = TRUE), "difficulties breathing")
+  words_vector <- str_replace_all(words_vector, regex(".*musc.*|.*discomfort.*|malaise|myalgia|.*physical.*", ignore_case = TRUE), "muscle soreness")
+  words_vector <- str_replace_all(words_vector, regex(".*throat.*", ignore_case = TRUE), "sore throat")
+  words_vector <- str_replace_all(words_vector, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE), "difficulties breathing")
   words_vector <- str_replace_all(words_vector, regex("diarr.*", ignore_case = TRUE), "diarrhea")
-  words_vector <- str_replace_all(words_vector, regex(".*weak|weaK.*", ignore_case = TRUE), "weakness")
+  words_vector <- str_replace_all(words_vector, regex(".*weak.*", ignore_case = TRUE), "weakness")
   words_vector <- str_replace_all(words_vector, regex("runny nose|rhinorreah", ignore_case = TRUE), "runny nose")
   words_vector <- str_replace_all(words_vector, regex("sputum|expectoration", ignore_case = TRUE), "wet cough")
-  words_vector <- str_replace_all(words_vector, regex(".*37|37.*", ignore_case = TRUE), "low fever")
-  words_vector <- str_replace_all(words_vector, regex(".*39|39.*", ignore_case = TRUE), "high fever")
+  words_vector <- str_replace_all(words_vector, regex(".*37.*", ignore_case = TRUE), "low fever")
+  words_vector <- str_replace_all(words_vector, regex(".*39.*", ignore_case = TRUE), "high fever")
   words_vector <- unique(words_vector)
   return(words_vector)
 }
 ```
 
 ```{r}
-level3_symptoms <- (words_vector){
-  words_vector <- str_replace_all(words_vector, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE), "muscle soreness")
-  words_vector <- str_replace_all(words_vector, regex("throat.*|.*throat", ignore_case = TRUE), "sore throat")
-  words_vector <- str_replace_all(words_vector, regex(".*breath|breath.*|.*dyspnea|dyspnea.*", ignore_case = TRUE), "difficulties breathing")
+level3_symptoms <- function(words_vector){
+  words_vector <- str_replace_all(words_vector, regex(".*musc.*|.*discomfort.*|malaise|myalgia|.*physical.*", ignore_case = TRUE), "muscle soreness")
+  words_vector <- str_replace_all(words_vector, regex(".*throat.", ignore_case = TRUE), "sore throat")
+  words_vector <- str_replace_all(words_vector, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE), "difficulties breathing")
   words_vector <- str_replace_all(words_vector, regex("diarr.*", ignore_case = TRUE), "diarrhea")
-  words_vector <- str_replace_all(words_vector, regex(".*weak|weaK.*", ignore_case = TRUE), "weakness")
+  words_vector <- str_replace_all(words_vector, regex(".*weak.*", ignore_case = TRUE), "weakness")
   words_vector <- str_replace_all(words_vector, regex("runny nose|rhinorreah", ignore_case = TRUE), "runny nose")
   words_vector <- str_replace_all(words_vector, regex("sputum|expectoration", ignore_case = TRUE), "wet cough")
-  words_vector <- str_replace_all(words_vector, regex(".*37|37.*", ignore_case = TRUE), "low fever")
-  words_vector <- str_replace_all(words_vector, regex(".*chest|chest.*", ignore_case = TRUE), "chest pain")
-  words_vector <- str_replace_all(words_vector, regex(".*pneu|pneu.*|respir.*", ignore_case = TRUE), "respiratory difficulties")
-  words_vector <- str_replace_all(words_vector, regex(".*39|39.*|fever", ignore_case = TRUE), "high fever")
-  words_vector <- str_replace_all(words_vector, regex(".*cough|cough.*|sneeze", ignore_case = TRUE), "dry cough")
-  words_vector <- str_replace_all(words_vector, regex(".*dry|dry.*", ignore_case = TRUE), "dryness")
+  words_vector <- str_replace_all(words_vector, regex(".*37.*", ignore_case = TRUE), "low fever")
+  words_vector <- str_replace_all(words_vector, regex(".*chest.*", ignore_case = TRUE), "chest pain")
+  words_vector <- str_replace_all(words_vector, regex(".*pneu.*|.*respir.*", ignore_case = TRUE), "respiratory difficulties")
+  words_vector <- str_replace_all(words_vector, regex(".*39.*|fever", ignore_case = TRUE), "high fever")
+  words_vector <- str_replace_all(words_vector, regex(".*cough.*|sneeze", ignore_case = TRUE), "dry cough")
+  words_vector <- str_replace_all(words_vector, regex(".*dry.*", ignore_case = TRUE), "dryness")
   words_vector <- unique(words_vector)
   return(words_vector)
 }

@@ -10,8 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(stringr)
+
 # Read the predictions into a single element
-preds <- readLines("testing.csv")
+preds <- readLines("data/testing.csv")
 # Turn it into a vector, separating based on the commas
 preds <- unlist(str_split(preds, pattern = ","))
 # Create a dataframe with Id and duration
