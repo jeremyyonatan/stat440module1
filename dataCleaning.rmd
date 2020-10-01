@@ -239,15 +239,20 @@ for( i in c(0:length(words2) ) ){
 
 Dataframe cleaning function
 ```{r}
-clean_age_and_symptoms <- function(df1){
+clean_confirmed_age_and_symptoms <- function(df1){
   # This function just applies all of the cleaning steps to the
   # Stat 440 module 1 covid data sets. The function accepts a dataframe
   # and outputs the cleaned dataframe.
   library(purrr)
   library(dplyr)
   library(stringr)
+  library(lubridate)
   source('range_to_mean.R')
   source('words_split.R')
+  
+  # Clean confirmed dates with lubridate
+  df1$confirmed <- dmy(df1$confirmed)
+  
   # Clean age ranges by converting age ranges to a single number
   df1$clean_age <- map_dbl(df1$age, range_to_mean)
   
@@ -291,7 +296,7 @@ Clean the test data set
 ```{r}
 # test2 <- read.csv("data/test2.txt")
 # 
-# test2 <- clean_age_and_symptoms(test2)
+# test2 <- clean_confirmed_age_and_symptoms(test2)
 # 
 # test2$symptoms <- NULL
 # test2$confirmed <- NULL
@@ -311,15 +316,8 @@ train_new <- read.csv("data/train2.txt")
 # Remove the "outcome" column for merging purposes
 train_new$outcome <- NULL
 
-# Remove the date columns too; we should use them once they've been cleaned
-# into a date variable so that we can use it as a numerical category for
-# the fast.ai model
-# Note that the fast.ai tabular model only accepts categorical or numerical
-# variables.
-train_new$confirmed <- NULL
-
 # Clean the df
-train_new <- clean_age_and_symptoms(train_new)
+train_new <- clean_confirmed_age_and_symptoms(train_new)
 
 # Consideration: Not sure what to do with the outcome column in the
 # old test set; not sure if they are actually all blank or missing
@@ -335,6 +333,8 @@ Fixing column issues
 test2 <- read.csv("data/test2.txt")
 
 test2$clean_age <- map_dbl(test2$age, range_to_mean)
+
+test2$confirmed <- dmy(test2$confirmed)
 
 # Create a vector of symptoms, with each element corresponding
 # to a symptom
@@ -365,13 +365,10 @@ for( i in c( 1:length(words2) ) ){
 test2 <- cbind(test2, symptoms_df)
   
 # Remove the intermediate variables
-rm(symptoms_df, words1, words2)
+rm(symptoms_df, words1, words2, i)
 
 # Add an empty duration column for test2
 test2$duration <- as.numeric(NA)
-
-# Remove the confirmed column
-test2$confirmed <- NULL
 
 # Remove the id column
 test2$Id <- NULL
@@ -381,7 +378,7 @@ head(colnames(train_new), 10)
 head(colnames(test2), 10)
 
 # Reorganize the columns
-test2 <- cbind(test2[ , 1:7], duration = test2[, 58], test2[8:57])
+test2 <- cbind(test2[ , 1:8], duration = test2[, 59], test2[9:58])
 
 # Check the first few column names
 head(colnames(train_new), 10)
@@ -390,16 +387,11 @@ head(colnames(test2), 10)
 # Fix column name issue
 ##colnames(test2)[65] <- "fever (38-39 C)"
 
-# Merge the datasets
+# Merge the training and test datasets
 full_df1 <- rbind(train_new, test2)
 
 # Remove the old symptoms column
 full_df1$symptoms <- NULL
-```
-
-Testing lubridate on confirmed column
-```{r}
-
 ```
 
 
