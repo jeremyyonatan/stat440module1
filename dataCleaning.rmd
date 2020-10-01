@@ -108,6 +108,97 @@ level3_symptoms <- function(words_vector){
 }
 ```
 
+```{r}
+detect_level1 <- function(df, word_vector) {
+  
+  for( i in c(0:length(words_vector) ) ){
+      if(word_vector[i] == "muscle soreness"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*musc.*|.*discomfort.*|malaise|myalgia", ignore_case = TRUE))
+      }else if (word_vector[i] =="sore throat"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "difficulties breathing"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "weakness"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "diarrhea"){
+        df$word_vector <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "runny nose"){
+        df$word_vector <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
+      }else if (word_vector[i] == "wet cough"){
+        df$word_vector <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
+      }else{
+        df$word_vector <- str_detect(df$symptoms, words_vector[i])
+      }
+  }
+}
+```
+
+```{r}
+detect_level2 <- function(df, word_vector) {
+  
+  for( i in c(0:length(words_vector) ) ){
+      if(word_vector[i] == "muscle soreness"){
+        df$word_vector <- str_detect(df$symptoms, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE))
+      }else if (word_vector[i] =="sore throat"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "difficulties breathing"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "weakness"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "diarrhea"){
+        df$word_vector <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "runny nose"){
+        df$word_vector <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
+      }else if (word_vector[i] == "wet cough"){
+        df$word_vector <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
+      }else if (word_vector[i] == "low fever"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*37.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "high fever"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*39.*", ignore_case = TRUE))
+      }else{
+        df$word_vector <- str_detect(df$symptoms, words_vector[i])
+      }
+  }
+}
+```
+
+```{r}
+detect_level2 <- function(df, word_vector) {
+  
+  for( i in c(0:length(words_vector) ) ){
+      if(word_vector[i] == "muscle soreness"){
+        df$word_vector <- str_detect(df$symptoms, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE))
+      }else if (word_vector[i] =="sore throat"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "difficulties breathing"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "weakness"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "diarrhea"){
+        df$word_vector <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "runny nose"){
+        df$word_vector <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
+      }else if (word_vector[i] == "wet cough"){
+        df$word_vector <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
+      }else if (word_vector[i] == "low fever"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*37.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "high fever"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*39.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "chest pain"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*chest.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "respiratory difficulties"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*pneu.*|.*respir.*", ignore_case = TRUE))
+      }else if (word_vector[i] == "dry cough"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*cough.*|sneeze", ignore_case = TRUE))
+      }else if (word_vector[i] == "dryness"){
+        df$word_vector <- str_detect(df$symptoms, regex(".*dry.*", ignore_case = TRUE))
+      }else{
+        df$word_vector <- str_detect(df$symptoms, words_vector[i])
+      }
+  }
+}
+```
+
 Clean symptoms
 ```{r}
 # Create a vector of symptoms, with each element corresponding to a symptom
@@ -161,6 +252,36 @@ for( i in c( 1:length(words3) ) ){
 
 # Combine the original train data frame with the new symptoms data frame
 train_full_level1 <- cbind(train, symptoms_df_level1)
+
+# Initialize a dataframe
+symptoms_df_level2 <- data.frame(matrix(nrow = nrow(train),
+                                        ncol = length(words4)))
+# Create column names from the unique symptoms
+colnames(symptoms_df_level2) <- words4
+
+# Create the vectors for the columns
+for( i in c( 1:length(words4) ) ){
+  # Each column indicates if the word is present in the symptoms column
+  symptoms_df_level2[ , i] <- str_detect(train$symptoms, words4[i])
+}
+
+# Combine the original train data frame with the new symptoms data frame
+train_full_level2 <- cbind(train, symptoms_df_level2)
+
+# Initialize a dataframe
+symptoms_df_level3 <- data.frame(matrix(nrow = nrow(train),
+                                        ncol = length(words5)))
+# Create column names from the unique symptoms
+colnames(symptoms_df_level3) <- words5
+
+# Create the vectors for the columns
+for( i in c( 1:length(words5) ) ){
+  # Each column indicates if the word is present in the symptoms column
+  symptoms_df_level3[ , i] <- str_detect(train$symptoms, words5[i])
+}
+
+# Combine the original train data frame with the new symptoms data frame
+train_full_level3 <- cbind(train, symptoms_df_level3)
 ```
 
 
