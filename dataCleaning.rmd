@@ -113,21 +113,21 @@ detect_level1 <- function(df, word_vector) {
   
   for( i in c(0:length(words_vector) ) ){
       if(word_vector[i] == "muscle soreness"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*musc.*|.*discomfort.*|malaise|myalgia", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*musc.*|.*discomfort.*|malaise|myalgia", ignore_case = TRUE))
       }else if (word_vector[i] =="sore throat"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
       }else if (word_vector[i] == "difficulties breathing"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
       }else if (word_vector[i] == "weakness"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
       }else if (word_vector[i] == "diarrhea"){
-        df$word_vector <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
       }else if (word_vector[i] == "runny nose"){
-        df$word_vector <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
       }else if (word_vector[i] == "wet cough"){
-        df$word_vector <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
       }else{
-        df$word_vector <- str_detect(df$symptoms, words_vector[i])
+        df$word_vector[i] <- str_detect(df$symptoms, words_vector[i])
       }
   }
 }
@@ -138,25 +138,25 @@ detect_level2 <- function(df, word_vector) {
   
   for( i in c(0:length(words_vector) ) ){
       if(word_vector[i] == "muscle soreness"){
-        df$word_vector <- str_detect(df$symptoms, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE))
       }else if (word_vector[i] =="sore throat"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
       }else if (word_vector[i] == "difficulties breathing"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
       }else if (word_vector[i] == "weakness"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
       }else if (word_vector[i] == "diarrhea"){
-        df$word_vector <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
       }else if (word_vector[i] == "runny nose"){
-        df$word_vector <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
       }else if (word_vector[i] == "wet cough"){
-        df$word_vector <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
       }else if (word_vector[i] == "low fever"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*37.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*37.*", ignore_case = TRUE))
       }else if (word_vector[i] == "high fever"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*39.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*39.*", ignore_case = TRUE))
       }else{
-        df$word_vector <- str_detect(df$symptoms, words_vector[i])
+        df$word_vector[i] <- str_detect(df$symptoms, words_vector[i])
       }
   }
 }
@@ -167,33 +167,33 @@ detect_level2 <- function(df, word_vector) {
   
   for( i in c(0:length(words_vector) ) ){
       if(word_vector[i] == "muscle soreness"){
-        df$word_vector <- str_detect(df$symptoms, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("musc.*|.*musc|discomfort.*|.*discomfort|malaise|myalgia|.*physical|pysical.*", ignore_case = TRUE))
       }else if (word_vector[i] =="sore throat"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*throat.*", ignore_case = TRUE))
       }else if (word_vector[i] == "difficulties breathing"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE))
       }else if (word_vector[i] == "weakness"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*weak.*", ignore_case = TRUE))
       }else if (word_vector[i] == "diarrhea"){
-        df$word_vector <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("diarr.*", ignore_case = TRUE))
       }else if (word_vector[i] == "runny nose"){
-        df$word_vector <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("runny nose|rhinorreah", ignore_case = TRUE))
       }else if (word_vector[i] == "wet cough"){
-        df$word_vector <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex("sputum|expectoration", ignore_case = TRUE))
       }else if (word_vector[i] == "low fever"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*37.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*37.*", ignore_case = TRUE))
       }else if (word_vector[i] == "high fever"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*39.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*39.*", ignore_case = TRUE))
       }else if (word_vector[i] == "chest pain"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*chest.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*chest.*", ignore_case = TRUE))
       }else if (word_vector[i] == "respiratory difficulties"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*pneu.*|.*respir.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*pneu.*|.*respir.*", ignore_case = TRUE))
       }else if (word_vector[i] == "dry cough"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*cough.*|sneeze", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*cough.*|sneeze", ignore_case = TRUE))
       }else if (word_vector[i] == "dryness"){
-        df$word_vector <- str_detect(df$symptoms, regex(".*dry.*", ignore_case = TRUE))
+        df$word_vector[i] <- str_detect(df$symptoms, regex(".*dry.*", ignore_case = TRUE))
       }else{
-        df$word_vector <- str_detect(df$symptoms, words_vector[i])
+        df$word_vector[i] <- str_detect(df$symptoms, words_vector[i])
       }
   }
 }
