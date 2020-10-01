@@ -227,6 +227,9 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   # Combine the original train data frame with the new symptoms data frame
   df2 <- cbind(df2, symptoms_df)
   
+  # Remove the old symptoms column
+  df2$symptoms <- NULL
+  
   # Remove the intermediate variables
   rm(symptoms_df, words1, words2, i)
   
@@ -234,6 +237,7 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   return(df2)
 }
 ```
+
 
 Clean the test data set
 ```{r}
@@ -333,6 +337,39 @@ full_df1 <- rbind(train_new, test2)
 # Remove the old symptoms column
 full_df1$symptoms <- NULL
 ```
+
+
+
+Testing the new function
+```{r}
+# Copying the new training set
+train_new <- read.csv("data/train2.txt")
+# Remove the "outcome" column for merging purposes
+train_new$outcome <- NULL
+
+test2 <- read.csv("data/test2.txt")
+# Remove the id column
+test2$Id <- NULL
+# Add an empty duration column for test2
+test2$duration <- as.numeric(NA)
+
+train_new_level0 <- clean_confirmed_age_and_symptoms(train_new, train_new,
+                                                     symptom_level = 0)
+
+test2_level0 <- clean_confirmed_age_and_symptoms(train_new, test2,
+                                                 symptom_level = 0)
+
+full_df1_level0 <- rbind(train_new_level0, test2_level0)
+
+# Trying level 1
+train_new_level1 <- clean_confirmed_age_and_symptoms(train_new, train_new,
+                                                     symptom_level = 1)
+test2_level1 <- clean_confirmed_age_and_symptoms(train_new, test2,
+                                                 symptom_level = 1)
+
+full_df1_level1 <- rbind(train_new_level1, test2_level1)
+```
+
 
 
 Exporting to Python
