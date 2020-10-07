@@ -101,6 +101,31 @@ level3_symptoms <- function(words_vector){
 }
 ```
 
+```{r}
+
+test <- function(colist){
+  if(any(colist)){
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+```
+
+```{r}
+
+combine <- function(df, groups){
+  for(name in unique(groups)){
+    temp_df <- as.data.frame(df[,name == names(df)])
+    if(ncol(temp_df) > 1){
+      df[,name == names(df)] <- NULL
+      df$groups[name] <- apply(temp_df, 1, test)
+    }
+  }
+}
+
+```
+
 
 Clean symptoms
 ```{r}
@@ -140,15 +165,24 @@ Symptom grouping testing
 
 #level 1 combination copy
 train_level1 <- train_full
-colnames(train_full_level1) <- level1_symptoms(colnames(train_full_level1))
+level1_groups <- level1_symptoms(colnames(train_level1))
+colnames(train_level1) <- level1_groups
+
+combine(train_level1, level1_groups)
 
 #level 2 combination copy
 train_level2 <- train_full
-colnames(train_level2) <- level2_symptoms(colnames(train_level2))
+level2_groups <- level2_symptoms(colnames(train_level2))
+colnames(train_level2) <- leve21_groups
+
+combine(train_level2, level2_groups)
 
 #level 3 combination copy
 train_level3 <- train_full
-colnames(train_level3) <- level3_symptoms(colnames(train_level3))
+level3_groups <- level1_symptoms(colnames(train_level3))
+colnames(train_level3) <- level3_groups
+
+combine(train_level3, level3_groups)
 
 ```
 
