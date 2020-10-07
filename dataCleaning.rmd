@@ -251,7 +251,8 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   # Create the vectors for the columns
   for( i in c( 1:length(words2) ) ){
     # Each column indicates if the word is present in the symptoms column
-    symptoms_df[ , i] <- str_detect(df2$symptoms, words2[i])
+    symptoms_df[ , i] <- str_detect(df2$symptoms,
+                                    paste0("\\Q", words2[i], "\\E"))
   }
   # Combine the original train data frame with the new symptoms data frame
   df2 <- cbind(df2, symptoms_df)
@@ -300,6 +301,27 @@ rm(train_new_level1, test2_level1)
 
 # Working on fixing the fever indicator variables; it's not detecting them
 
+```
+
+Testing the symptom indicators
+```{r, eval = F}
+# Copying the new training set
+train_new <- read.csv("data/train2.txt")
+# Remove the "outcome" column for merging purposes
+train_new$outcome <- NULL
+
+train_new_level0 <- clean_confirmed_age_and_symptoms(train_new, train_new,
+                                                     symptom_level = 0)
+
+colSums(train_new_level0[ , 10:57])
+
+skrt <- train_new$symptoms[1]
+skrt1 <- tolower(skrt)
+skrt2 <- str_replace_all(skrt1, "[:space:]*℃", " C") %>%
+  str_replace_all(" ° c", " C")
+skrt3 <- words_split(skrt2, sep = "; ")[2]
+skrt4 <- skrt3
+str_detect(skrt4, paste0("\\Q", skrt3, "\\E"))
 ```
 
 Test the cleaning function
