@@ -93,7 +93,7 @@ level3_symptoms <- function(words_vector){
   words_vector <- str_replace_all(words_vector, regex(".*37.*", ignore_case = TRUE), "low fever")
   words_vector <- str_replace_all(words_vector, regex(".*chest.*", ignore_case = TRUE), "chest pain")
   words_vector <- str_replace_all(words_vector, regex(".*pneu.*|.*respir.*", ignore_case = TRUE), "respiratory difficulties")
-  words_vector <- str_replace_all(words_vector, regex(".*39.*|fever", ignore_case = TRUE), "high fever")
+  words_vector <- str_replace_all(words_vector, regex(".*39.*|^fever$", ignore_case = TRUE), "high fever")
   words_vector <- str_replace_all(words_vector, regex(".*cough.*|sneeze", ignore_case = TRUE), "dry cough")
   words_vector <- str_replace_all(words_vector, regex(".*dry.*", ignore_case = TRUE), "dryness")
   
