@@ -102,7 +102,6 @@ level3_symptoms <- function(words_vector){
 ```
 
 ```{r}
-
 test <- function(colist){
   if(any(colist)){
     return(TRUE)
@@ -113,7 +112,6 @@ test <- function(colist){
 ```
 
 ```{r}
-
 combine <- function(df, groups){
   unique_groups <- unique(groups)
   print(length(unique_groups))
@@ -138,38 +136,17 @@ combine <- function(df, groups){
 
 Clean symptoms
 ```{r}
-# Create a vector of symptoms, with each element corresponding to a symptom
-words1 <- words_split(train$symptoms, sep = "; ")
+# Copying the new training set
+train <- read.csv("data/train2.txt")
+# Remove the "outcome" column for merging purposes
+train$outcome <- NULL
 
-# Looking at the frequencies of the symptoms
-sort(table(words1), decreasing = T)
-
-# Get the unique symptoms
-words2 <- words1 %>%
-  unique() %>%
-  # Replace the "℃" with "C"
-  str_replace_all("℃", "C") %>%
-  # Replace " ° " with " "
-  str_replace_all(" ° ", " ")
-
-# Initialize a dataframe
-symptoms_df <- data.frame(matrix(nrow = nrow(train),
-                                 ncol = length(words2)))
-# Create column names from the unique symptoms
-colnames(symptoms_df) <- words2
-                      
-# Create the vectors for the columns
-for( i in c( 1:length(words2) ) ){
-  # Each column indicates if the word is present in the symptoms column
-  symptoms_df[ , i] <- str_detect(train$symptoms, words2[i])
-}
-
-# Combine the original train data frame with the new symptoms data frame
-train_full <- cbind(train, symptoms_df)
+train_full <- clean_confirmed_age_and_symptoms(train, train,
+                                               symptom_level = 0)
 ```
 
 Symptom grouping testing
-```{r, eval = F}
+```{r}
 # Create the various symptom binning levels
 
 #level 1 combination copy
@@ -193,13 +170,29 @@ colnames(train_level3) <- level3_groups
 
 final_level3 <- combine(train_level3, level3_groups)
 
+# Remove the symptoms columns
+final_level1$symptoms <- NULL
+final_level2$symptoms <- NULL
+final_level3$symptoms <- NULL
 ```
+
+Check that none of the column sums for the symptoms are 0
+```{r}
+colSums(final_level1[ , 9:ncol(final_level1)])
+colSums(final_level2[ , 9:ncol(final_level2)])
+colSums(final_level3[ , 9:ncol(final_level3)])
+
+# There are 76 + 5 fevers in final_level1 and final_level2, but not in 3
+# There seems to be 2 missing in final_level3
+```
+
 write out cleaned csvs
 ```{r}
 write.csv(final_level1, "level1.csv")
 write.csv(final_level2, "level2.csv")
 write.csv(final_level3, "level3.csv")
 ```
+
 
 
 Dataframe cleaning function
