@@ -197,6 +197,10 @@ final_level3$symptoms <- NULL
 final_test1$symptoms <- NULL
 final_test2$symptoms <- NULL
 final_test3$symptoms <- NULL
+final_level3$clean_age <- cut(final_level3$clean_age, breaks=c(0,2,18,25,45,65,1000), labels=c("baby","child","young adult", "adult", "older adult", "senior"))
+final_level3 <- final_level3[c[clean_age, sex, city, province, country, V1, confirmed, duration, gi, respiratory, fever, weakness]]
+final_test3$clean_age <- cut(final_test3$clean_age, breaks=c(0,2,18,25,45,65,1000), labels=c("baby","child","young adult", "adult", "older adult", "senior"))
+final_test3 <- final_test3[c[clean_age, sex, city, province, country, V1, confirmed, duration, gi, respiratory, fever, weakness]]
 ```
 
 Check that none of the column sums for the symptoms are 0
@@ -247,8 +251,7 @@ ggplot(final_level3, aes(duration, fill=runnynose)) +
     geom_histogram(position = "stack", binwidth=2)
 ggplot(final_level3, aes(duration, fill=conjunctivitis)) +
     geom_histogram(position = "stack", binwidth=2)
-ggplot(final_level3, aes(clean_age)) +
-    geom_histogram(binwidth=2)
+
 ```
 ```{r}
 ggplot(final_level3, aes(clean_age)) +
