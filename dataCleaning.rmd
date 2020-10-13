@@ -26,7 +26,7 @@ summary(train)
 str(train)
 ```
 
-```{r}
+```{r, eval = F}
 # Clean age ranges by converting age ranges to a single number
 train$clean_age <- map_dbl(train$age, range_to_mean)
 summary(train)
@@ -102,7 +102,7 @@ level3_symptoms <- function(words_vector){
 ```
 
 ```{r}
-test <- function(colist){
+test_func <- function(colist){
   if(any(colist)){
     return(TRUE)
   }
@@ -125,7 +125,7 @@ combine <- function(df, groups){
   for(name in unique_groups){
     temp_df <- as.data.frame(copy_df[,name == names(copy_df)])
     if(ncol(temp_df) > 1){
-     df[[name]] <- apply(temp_df, 1, test)
+     df[[name]] <- apply(temp_df, 1, test_func)
     }
   }
   return(df)
@@ -143,44 +143,77 @@ train$outcome <- NULL
 
 train_full <- clean_confirmed_age_and_symptoms(train, train,
                                                symptom_level = 0)
+
+# Clean test into test_full
+test <- read.csv("data/test2.txt")
+test$Id <- NULL
+# For merging purposes
+test$duration <- NA
+
+test_full <- clean_confirmed_age_and_symptoms(test, train,
+                                              symptom_level = 0)
 ```
 
 Symptom grouping testing
 ```{r}
 # Create the various symptom binning levels
 
-#level 1 combination copy
+# level 1 combination copy
 train_level1 <- train_full
 level1_groups <- level1_symptoms(colnames(train_level1))
 colnames(train_level1) <- level1_groups
 
 final_level1 <- combine(train_level1, level1_groups)
 
-#level 2 combination copy
+# level 1 test copy
+test_level1 <- test_full
+colnames(test_level1) <- level1_groups
+final_test1 <- combine(test_level1, level1_groups)
+
+# level 2 combination copy
 train_level2 <- train_full
 level2_groups <- level2_symptoms(colnames(train_level2))
 colnames(train_level2) <- level2_groups
 
 final_level2 <- combine(train_level2, level2_groups)
 
-#level 3 combination copy
+# level 2 test copy
+test_level2 <- test_full
+colnames(test_level2) <- level2_groups
+final_test2 <- combine(test_level2, level2_groups)
+
+# level 3 combination copy
 train_level3 <- train_full
 level3_groups <- level3_symptoms(colnames(train_level3))
 colnames(train_level3) <- level3_groups
 
 final_level3 <- combine(train_level3, level3_groups)
 
+# level 3 test copy
+test_level3 <- test_full
+colnames(test_level3) <- level3_groups
+final_test3 <- combine(test_level3, level3_groups)
+
 # Remove the symptoms columns
 final_level1$symptoms <- NULL
 final_level2$symptoms <- NULL
 final_level3$symptoms <- NULL
+final_test1$symptoms <- NULL
+final_test2$symptoms <- NULL
+final_test3$symptoms <- NULL
 ```
 
 Check that none of the column sums for the symptoms are 0
 ```{r}
+# Training
 colSums(final_level1[ , 9:ncol(final_level1)])
 colSums(final_level2[ , 9:ncol(final_level2)])
 colSums(final_level3[ , 9:ncol(final_level3)])
+
+# Validation
+colSums(final_test1[ , 9:ncol(final_test1)])
+colSums(final_test2[ , 9:ncol(final_test2)])
+colSums(final_test3[ , 9:ncol(final_test3)])
 
 # There are 76 + 5 fevers in final_level1 and final_level2, but not in 3
 # There seems to be 2 missing in final_level3
@@ -297,7 +330,7 @@ test2$duration <- as.numeric(NA)
 train_new_level0 <- clean_confirmed_age_and_symptoms(train_new, train_new,
                                                      symptom_level = 0)
 
-test2_level0 <- clean_confirmed_age_and_symptoms(train_new, test2,
+test2_level0 <- clean_confirmed_age_and_symptoms(test2, train_new,
                                                  symptom_level = 0)
 
 full_df1_level0 <- rbind(train_new_level0, test2_level0)
@@ -306,7 +339,7 @@ rm(train_new_level0, test2_level0)
 # Trying level 1
 train_new_level1 <- clean_confirmed_age_and_symptoms(train_new, train_new,
                                                      symptom_level = 1)
-test2_level1 <- clean_confirmed_age_and_symptoms(train_new, test2,
+test2_level1 <- clean_confirmed_age_and_symptoms(test2, train_new,
                                                  symptom_level = 1)
 
 full_df1_level1 <- rbind(train_new_level1, test2_level1)
