@@ -115,6 +115,7 @@ combine <- function(df, groups){
   for(name in unique_groups){
     temp_df <- as.data.frame(df[,name == names(df)])
     if(ncol(temp_df) > 1){
+     print(temp_df)
      df[,name == names(df)] <- NULL
     }
   }
@@ -197,6 +198,8 @@ final_level3$symptoms <- NULL
 final_test1$symptoms <- NULL
 final_test2$symptoms <- NULL
 final_test3$symptoms <- NULL
+final_level3$confirmed <- as.Date(final_level3$confirmed)
+final_level3$confirmed <- cut(final_level3$confirmed, breaks= "2 weeks")
 final_level3$clean_age <- cut(final_level3$clean_age, breaks=c(0,2,18,25,45,65,1000), labels=c("baby","child","young adult", "adult", "older adult", "senior"))
 final_level3 <- select(final_level3,c(clean_age, country, V1, confirmed, duration, gi, respiratory, fever, weakness))
 final_test3$clean_age <- cut(final_test3$clean_age, breaks=c(0,2,18,25,45,65,1000), labels=c("baby","child","young adult", "adult", "older adult", "senior"))
@@ -243,15 +246,11 @@ ggplot(final_level3, aes(duration, fill=gi)) +
     geom_histogram(position = "stack", binwidth=2)
 ggplot(final_level3, aes(duration, fill=weakness)) +
     geom_histogram(position = "stack", binwidth=2)
-ggplot(final_level3, aes(duration, fill = sex)) +
-    geom_histogram(binwidth=2)
-ggplot(final_level3, aes(duration, fill = city)) +
-    geom_histogram(binwidth=2)
 ggplot(final_level3, aes(duration, fill = country)) +
     geom_histogram(binwidth=2)
-ggplot(final_level3, aes(duration, fill = province)) +
-    geom_histogram(binwidth=2)
 ggplot(final_level3, aes(duration, fill = V1)) +
+    geom_histogram(binwidth=2)
+ggplot(final_level3, aes(duration, fill = confirmed)) +
     geom_histogram(binwidth=2)
 ```
 
