@@ -205,14 +205,14 @@ final_test3$symptoms <- NULL
 Check that none of the column sums for the symptoms are 0
 ```{r}
 # Training
-colSums(final_level1[ , 9:ncol(final_level1)])
-colSums(final_level2[ , 9:ncol(final_level2)])
+#colSums(final_level1[ , 9:ncol(final_level1)])
+#colSums(final_level2[ , 9:ncol(final_level2)])
 colSums(final_level3[ , 9:ncol(final_level3)])
 
 # Validation
-colSums(final_test1[ , 9:ncol(final_test1)])
-colSums(final_test2[ , 9:ncol(final_test2)])
-colSums(final_test3[ , 9:ncol(final_test3)])
+#colSums(final_test1[ , 9:ncol(final_test1)])
+#colSums(final_test2[ , 9:ncol(final_test2)])
+#colSums(final_test3[ , 9:ncol(final_test3)])
 
 # There are 76 + 5 fevers in final_level1 and final_level2, but not in 3
 # There seems to be 2 missing in final_level3
