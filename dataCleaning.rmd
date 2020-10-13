@@ -188,9 +188,9 @@ colSums(final_level3[ , 9:ncol(final_level3)])
 
 write out cleaned csvs
 ```{r}
-write.csv(final_level1, "level1.csv")
-write.csv(final_level2, "level2.csv")
-write.csv(final_level3, "level3.csv")
+write.csv(final_level1, "data/level1.csv")
+write.csv(final_level2, "data/level2.csv")
+write.csv(final_level3, "data/level3.csv")
 ```
 
 
