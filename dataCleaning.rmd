@@ -83,18 +83,15 @@ level2_symptoms <- function(words_vector){
 
 ```{r}
 level3_symptoms <- function(words_vector){
-  words_vector <- str_replace_all(words_vector, regex(".*musc.*|.*discomfort.*|malaise|myalgia|.*physical.*", ignore_case = TRUE), "muscle soreness")
-  words_vector <- str_replace_all(words_vector, regex(".*throat.", ignore_case = TRUE), "sore throat")
-  words_vector <- str_replace_all(words_vector, regex(".*breath.*|.*dyspnea.*", ignore_case = TRUE), "difficulties breathing")
-  words_vector <- str_replace_all(words_vector, regex("diarr.*", ignore_case = TRUE), "diarrhea")
-  words_vector <- str_replace_all(words_vector, regex(".*weak.*", ignore_case = TRUE), "weakness")
-  words_vector <- str_replace_all(words_vector, regex("runny nose|rhinorreah", ignore_case = TRUE), "runny nose")
-  words_vector <- str_replace_all(words_vector, regex("sputum|expectoration", ignore_case = TRUE), "wet cough")
-  words_vector <- str_replace_all(words_vector, regex(".*chest.*", ignore_case = TRUE), "chest pain")
-  words_vector <- str_replace_all(words_vector, regex(".*pneu.*|.*respir.*", ignore_case = TRUE), "respiratory difficulties")
-  words_vector <- str_replace_all(words_vector, regex(".*fever.*", ignore_case = TRUE), "fever")
-  words_vector <- str_replace_all(words_vector, regex(".*cough.*|sneeze", ignore_case = TRUE), "dry cough")
-  words_vector <- str_replace_all(words_vector, regex(".*dry.*", ignore_case = TRUE), "dryness")
+  words_vector <- str_replace_all(words_vector, regex(".*musc.*|.*discomfort.*|malaise|myalgia|.*physical.*|.*weak.*|.*fatigue.*", ignore_case = TRUE), "weakness")
+  words_vector <- str_replace_all(words_vector, regex(".*throat.", ignore_case = TRUE), "sorethroat")
+  #runny nose issue
+  words_vector <- str_replace_all(words_vector, regex(".*breath.*|.*dyspnea.*|.*chest.*|.*pneu.*|.*respir.*|.*phar.*|.*cough.*|sneeze|sputum|expectoration|.*nasal.*|.*nose.*|.*mouth.*", ignore_case = TRUE), "respiratory")
+  words_vector <- str_replace_all(words_vector, regex("runny nose|.*rhino.*", ignore_case = TRUE), "runnynose")
+  #fever issue
+  words_vector <- str_replace_all(words_vector, regex(".*fever.*|chills", ignore_case = TRUE), "fever")
+  #vomting issue
+  words_vector <- str_replace_all(words_vector, regex(".*nausea.*|.*vomit.*|.*diarr.*", ignore_case = TRUE), "gi")
   
   return(words_vector)
 }
@@ -229,6 +226,34 @@ write.csv(final_test2, "data/test_level2.csv")
 write.csv(final_test3, "data/test_level3.csv")
 ```
 
+```{r, eval = F}
+names(final_level3)[names(final_level3)=="sore throat"] <- "sorethroat"
+names(final_level3)[names(final_level3)=="nasal congestion"] <- "nasalcongestion"
+ggplot(final_level3, aes(duration, fill=clean_age)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill= respiratory)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=fever)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=gi)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=weakness)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=sorethroat)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=headache)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=runnynose)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(duration, fill=conjunctivitis)) +
+    geom_histogram(position = "stack", binwidth=2)
+ggplot(final_level3, aes(clean_age)) +
+    geom_histogram(binwidth=2)
+```
+```{r}
+ggplot(final_level3, aes(clean_age)) +
+    geom_histogram(binwidth=2)
+```
 
 
 Dataframe cleaning function
