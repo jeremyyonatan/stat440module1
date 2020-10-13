@@ -232,7 +232,7 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   
   # Create a vector of symptoms, with each element corresponding
   # to a symptom
-  words1 <- words_split(df1$symptoms, sep = "; ")
+  words1 <- words_split(df2$symptoms, sep = "; ")
   
   # Get the unique symptoms
   words2 <- words1 %>%
@@ -250,7 +250,7 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   
   # Initialize a dataframe
   symptoms_df <- data.frame(
-    matrix(nrow = nrow(df2),
+    matrix(nrow = nrow(df1),
            ncol = length(words2))
     )
   # Create column names from the unique symptoms
@@ -259,11 +259,11 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   # Create the vectors for the columns
   for( i in c( 1:length(words2) ) ){
     # Each column indicates if the word is present in the symptoms column
-    symptoms_df[ , i] <- str_detect(df2$symptoms,
+    symptoms_df[ , i] <- str_detect(df1$symptoms,
                                     paste0("\\Q", words2[i], "\\E"))
   }
   # Combine the original train data frame with the new symptoms data frame
-  df2 <- cbind(df2, symptoms_df)
+  df1 <- cbind(df1, symptoms_df)
   
   # Remove the old symptoms column
   ##df2$symptoms <- NULL
@@ -272,7 +272,7 @@ clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   rm(symptoms_df, words1, words2, i)
   
   # Return the new dataframe
-  return(df2)
+  return(df1)
 }
 ```
 
