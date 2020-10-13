@@ -199,11 +199,16 @@ Dataframe cleaning function
 ```{r}
 clean_confirmed_age_and_symptoms <- function(df1, df2, symptom_level = 0){
   # This function just applies all of the cleaning steps to the
-  # Stat 440 module 1 covid data sets. The function accepts a dataframe to
-  # obtain the symptoms from, a dataframe to apply the cleaning to, and a
-  # numeric symptom level. This function outputs the cleaned dataframe (df2).
-  # The symptom level ranges from 0 to 3, with 0 being no symptom binning
-  # and 1-3 containing some symptom binning
+  # Stat 440 module 1 covid data sets.
+  #
+  # Arguments:
+  # df1 | dataframe | dataframe to do the cleaning on
+  # df2 | dataframe | dataframe to create symptom indicator variables from
+  # symptom_level | numeric | level of symptom grouping desired
+  #
+  # Returns:
+  # df1 | dataframe | cleaned dataframe with symptom indicator variables from
+  #                   df2 and with appropriate symptom level grouping
   
   library(purrr)
   library(dplyr)
