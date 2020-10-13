@@ -224,6 +224,10 @@ write out cleaned csvs
 write.csv(final_level1, "data/level1.csv")
 write.csv(final_level2, "data/level2.csv")
 write.csv(final_level3, "data/level3.csv")
+
+write.csv(final_test1, "data/test_level1.csv")
+write.csv(final_test2, "data/test_level2.csv")
+write.csv(final_test3, "data/test_level3.csv")
 ```
 
 
