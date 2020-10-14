@@ -85,38 +85,4 @@ write.table(baseline, file = "baseline.txt", sep = ",",
             row.names = FALSE)
 ```
 
-#Elastic Net Regression
-```{r}
-# Set training control
-train_cont <- trainControl(method = "repeatedcv",
-                              number = 10,
-                              repeats = 5,
-                              search = "random",
-                              verboseIter = TRUE)
-# Train the model
-elastic_reg <- train(duration ~ .,
-                           data = train,
-                           method = "glmnet",
-                           preProcess = c("center", "scale"),
-                           tuneLength = 10,
-                           trControl = trainControl)
 
-
-# Best tuning parameter
-elastic_reg$bestTune
-
-# Make predictions on training set
-predictions_train <- predict(elastic_reg, x)
-eval_results(y_train, predictions_train, train) 
-
-# Make predictions on test set
-predictions_test <- predict(elastic_reg, x_test)
-eval_results(y_test, predictions_test, test)
-```
-#Regression Trees
-```{r}
-library(rpart)
-library(rpart.plot)
-reg.tree <- rpart(duration ~ ., data = train)
-rpart.plot(reg.tree, type = 4)
-```
