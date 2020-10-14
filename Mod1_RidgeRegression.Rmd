@@ -1,0 +1,122 @@
+---
+title: "STAT 440 using Ridge Regression"
+author: "Nathania Santoso"
+date: "10/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("/Users/nathaniasantoso/Desktop")
+#load cleaned train and test data
+train <- read.csv("level2.csv", sep=",")
+test <- read.csv("test_level2.csv", sep=",")
+#change the value from T/F to 0 and 1
+train[,11:40] <- (train[,11:40])*1
+test[,11:40] <- (test[,11:40])*1
+#drop  missing values
+train <- train[complete.cases(train), ]
+test <- test[complete.cases(train), ]
+```
+
+#Ridge Regression
+```{r}
+library(plyr)
+library(readr)
+library(caret)
+library(ggplot2)
+library(repr)
+library(glmnet)
+library(tidyverse)
+
+x = train %>% select(-duration) %>% data.matrix()
+y_train = train$duration
+
+x_test = test %>% select(-duration) %>% data.matrix()
+y_test = test$duration
+
+lambdas <- 10^seq(2, -3, by = -.1)
+ridge_reg = glmnet(x, y_train, nlambda = 25, alpha = 0, family='gaussian',lambda=lambdas)   
+
+summary(ridge_reg)
+```
+#finding the optimal Lambda
+```{r}
+cv_ridge <- cv.glmnet(x, y_train, alpha = 0, lambda = lambdas)
+optimal_lambda <- cv_ridge$lambda.min
+optimal_lambda
+
+# Compute R^2 from true and predicted values
+eval_results <- function(true, predicted, df) {
+  SSE <- sum((predicted - true)^2)
+  SST <- sum((true - mean(true))^2)
+  R_square <- 1 - SSE / SST
+  RMSE = sqrt(SSE/nrow(df))
+
+  
+# Model performance metrics
+data.frame(
+  RMSE = RMSE,
+  Rsquare = R_square
+)
+  
+}
+
+# Prediction and evaluation on train data
+predictions_train <- predict(ridge_reg, s = optimal_lambda, newx = x)
+eval_results(y_train, predictions_train, train)
+
+# Prediction and evaluation on test data
+predictions_test <- predict(ridge_reg, s = optimal_lambda, newx = x_test)
+eval_results(y_test, predictions_test, test)
+```
+```{r}
+#create baseline file
+baseline <- cbind(train[,1],predictions_test)
+mean_duration <- mean(baseline[,2])
+baseline <- cbind(train[1:200,1],mean_duration)
+#rename columns
+colnames(baseline)[1:2] <-c("Id","duration")
+#export to csv file
+write.table(baseline, file = "baseline.txt", sep = ",",
+            row.names = FALSE)
+```
+
+#Elastic Net Regression
+```{r}
+# Set training control
+train_cont <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = 5,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+elastic_reg <- train(duration ~ .,
+                           data = train,
+                           method = "glmnet",
+                           preProcess = c("center", "scale"),
+                           tuneLength = 10,
+                           trControl = trainControl)
+
+
+# Best tuning parameter
+elastic_reg$bestTune
+
+# Make predictions on training set
+predictions_train <- predict(elastic_reg, x)
+eval_results(y_train, predictions_train, train) 
+
+# Make predictions on test set
+predictions_test <- predict(elastic_reg, x_test)
+eval_results(y_test, predictions_test, test)
+```
+#Regression Trees
+```{r}
+library(rpart)
+library(rpart.plot)
+reg.tree <- rpart(duration ~ ., data = train)
+rpart.plot(reg.tree, type = 4)
+```
