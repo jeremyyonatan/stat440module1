@@ -50,7 +50,7 @@ test <- test%>% fill (clean_age)
 ```{r}
 test <- select (test,-c(age))
 completeTrain <- select (completeTrain,-c(age))
-x = train %>% select(-duration) %>% data.matrix()
+x = completeTrain %>% select(-duration) %>% data.matrix()
 y_train = completeTrain$duration
 
 x_test = test %>% select(-duration) %>% data.matrix()
