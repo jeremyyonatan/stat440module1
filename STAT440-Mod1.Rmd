@@ -27,9 +27,6 @@ test <- read.csv("test_level2.csv", sep=",")
 #change the value from T/F to 0 and 1
 train[,11:40] <- (train[,11:40])*1
 test[,11:40] <- (test[,11:40])*1
-#drop  missing values
-#train <- train[complete.cases(train), ]
-#test <- test[complete.cases(train), ]
 ```
 #using MICE package for missing data (Training Set)
 ```{r}
